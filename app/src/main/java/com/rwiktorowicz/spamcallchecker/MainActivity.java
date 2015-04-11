@@ -1,5 +1,7 @@
 package com.rwiktorowicz.spamcallchecker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,11 +26,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void searchButtonClick(View view) {
-        EditText phoneTextBox = (EditText) findViewById(R.id.phoneTextBox);
-        String phonenumber = phoneTextBox.getText().toString().replaceAll("\\D+","");
+        EditText phonetextbox = (EditText) findViewById(R.id.phoneTextBox);
+        String phonenumber = removeNonNumericCharacters(phonetextbox.getText().toString());
 
-        if (phonenumber.length() != 10) {
-            Toast.makeText(this,"The phone number is not valid. The length must be 10 with no special characters!",Toast.LENGTH_SHORT).show();
+        if (phonenumber.length() != 11) {
+            Toast.makeText(this,"The phone number is not valid. Must be 11 digits including a prefix of 1!",Toast.LENGTH_SHORT).show();
         }
         else {
             Intent openurl = new Intent(Intent.ACTION_VIEW, Uri.parse(getURL(phonenumber)));
@@ -39,18 +41,33 @@ public class MainActivity extends ActionBarActivity {
     public void recentCallsButtonClick(View view) {
         ArrayList<String> recentcalls = new ArrayList<String>();
 
-        Cursor callCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI,null,null,null,null);
-        int phonenumberindex = callCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        while (callCursor.moveToNext()) {
-            String phonenumber = callCursor.getString(phonenumberindex);
+        /* Grab last 20 calls and add them to an array list to pass into recent call dialog */
+        Cursor callcursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+        int phonenumbercolumnindex = callcursor.getColumnIndex(CallLog.Calls.NUMBER);
+        while (callcursor.moveToNext()) {
+            String phonenumber = getFormattedPhoneNumber(callcursor.getString(phonenumbercolumnindex),true);
             recentcalls.add(phonenumber);
-        }
 
-        Intent showcalls = new Intent(this,RecentCallActivity.class);
-        showcalls.putStringArrayListExtra("RecentCallList",recentcalls);
-        startActivity(showcalls);
+            if (recentcalls.size() == 20) {
+                break;
+            }
+        }
+        callcursor.close();
+        final CharSequence[] recentcallssequence = recentcalls.toArray(new CharSequence[recentcalls.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Choose a phone number:")
+                .setItems(recentcallssequence, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        EditText phonetextbox = (EditText) findViewById(R.id.phoneTextBox);
+                        phonetextbox.setText(removeNonNumericCharacters(recentcallssequence[i].toString()));
+                    }
+                });
+        AlertDialog recentcalldialog = builder.create();
+        recentcalldialog.show();
     }
 
+    /* Returns properly formatted url, depending on service choice */
     private String getURL(String phonenumber) {
         String url = "";
 
@@ -75,24 +92,41 @@ public class MainActivity extends ActionBarActivity {
         return url;
     }
 
+    /* Returns a phone number in either #-###-###-#### or #-(###)-###-#### format.
+     * Returns null if phone number is invalid. */
     private String getFormattedPhoneNumber(String phonenumber, boolean includeparenthesis) {
-        String formattedPhoneNumber;
-        phonenumber = phonenumber.replaceAll("\\D+","");
+        String formattedphonenumber;
+        phonenumber = removeNonNumericCharacters(phonenumber);
 
-        if (phonenumber.length() != 10) {
+        /*
+        If the phone number's length is not 10 or 11, it is invalid. Return null.
+        otherwise if it has a length of 10, it is missing the 1 prefix, so add it for proper formatting.
+        */
+        if (phonenumber.length() < 10 || phonenumber.length() > 11) {
             return null;
         }
-        String[] phonearray = {phonenumber.substring(0,3), phonenumber.substring(3,6),
-                phonenumber.substring(6)};
+        else if (phonenumber.length() == 10) {
+            phonenumber = "1" + phonenumber;
+        }
+
+        String[] phonearray = {phonenumber.substring(1, 4), phonenumber.substring(4, 7),
+                 phonenumber.substring(7)};
 
         if (includeparenthesis) {
-            formattedPhoneNumber = String.format("1-(%s)-%s-%s",phonearray[0],phonearray[1],phonearray[2]);
-        }
-        else {
-            formattedPhoneNumber = String.format("1-%s-%s-%s",phonearray[0],phonearray[1],phonearray[2]);
+            formattedphonenumber = String.format("1-(%s)-%s-%s", phonearray[0], phonearray[1], phonearray[2]);
+        } else {
+            formattedphonenumber = String.format("1-%s-%s-%s", phonearray[0], phonearray[1], phonearray[2]);
         }
 
-        return formattedPhoneNumber;
+        return formattedphonenumber;
+    }
+
+    /* Strips input of all non-numeric characters.  If null, return null */
+    private String removeNonNumericCharacters(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("\\D+","");
     }
 
 }

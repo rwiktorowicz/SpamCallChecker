@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:ems="10"
-            android:maxLength="10"
+            android:maxLength="11"
             android:id="@+id/phoneTextBox"
             android:layout_gravity="center_horizontal"
             android:hint="Enter New Phone Number" />
