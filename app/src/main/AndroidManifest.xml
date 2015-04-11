@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rwiktorowicz.spamcallchecker" >
+    
+    <uses-permission android:name="android.permission.READ_CALL_LOG"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -17,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MissedCallActivity"
+            android:name=".RecentCallActivity"
             android:label="@string/title_activity_missed_call" >
         </activity>
     </application>

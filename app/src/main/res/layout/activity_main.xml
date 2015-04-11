@@ -28,10 +28,11 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select From Missed Calls"
-                android:id="@+id/missedCallButton"
+                android:text="Select From Recent Calls"
+                android:id="@+id/recentCallButton"
                 android:layout_gravity="right"
-                android:layout_marginLeft="70px" />
+                android:layout_marginLeft="70px"
+                android:onClick="recentCallsButtonClick" />
         </LinearLayout>
 
         <EditText

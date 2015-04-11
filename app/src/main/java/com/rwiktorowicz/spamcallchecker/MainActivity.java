@@ -1,14 +1,18 @@
 package com.rwiktorowicz.spamcallchecker;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.provider.CallLog;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -30,6 +34,21 @@ public class MainActivity extends ActionBarActivity {
             Intent openurl = new Intent(Intent.ACTION_VIEW, Uri.parse(getURL(phonenumber)));
             startActivity(openurl);
         }
+    }
+
+    public void recentCallsButtonClick(View view) {
+        ArrayList<String> recentcalls = new ArrayList<String>();
+
+        Cursor callCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI,null,null,null,null);
+        int phonenumberindex = callCursor.getColumnIndex(CallLog.Calls.NUMBER);
+        while (callCursor.moveToNext()) {
+            String phonenumber = callCursor.getString(phonenumberindex);
+            recentcalls.add(phonenumber);
+        }
+
+        Intent showcalls = new Intent(this,RecentCallActivity.class);
+        showcalls.putStringArrayListExtra("RecentCallList",recentcalls);
+        startActivity(showcalls);
     }
 
     private String getURL(String phonenumber) {
