@@ -57,24 +57,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/serviceRadios"></RadioGroup>
+            android:id="@+id/serviceRadios"
+            android:checkedButton="@+id/RadioButton800">
 
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="800Notes.com"
-            android:id="@+id/RadioButton800"
-            android:layout_marginBottom="20px"
-            android:textSize="50px" />
+            <RadioButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="800Notes.com"
+                android:id="@+id/RadioButton800"
+                android:layout_marginBottom="20px"
+                android:textSize="50px" />
 
-        <RadioButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Mr. Number"
-            android:id="@+id/RadioButtonMrNumber"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20px"
-            android:textSize="50px" />
+            <RadioButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Mr. Number"
+                android:id="@+id/RadioButtonMrNumber"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20px"
+                android:textSize="50px" />
+        </RadioGroup>
 
         <Button
             android:layout_width="wrap_content"
@@ -82,7 +84,9 @@
             android:text="Search"
             android:id="@+id/searchButton"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="40px" />
+            android:layout_marginTop="40px"
+            android:nestedScrollingEnabled="false"
+            android:onClick="searchButtonClick" />
 
 
     </LinearLayout>
