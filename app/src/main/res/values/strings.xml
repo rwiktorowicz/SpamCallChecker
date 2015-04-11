@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SpamCallChecker</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="servicePrompt">Choose A Service</string>
+    <string-array name="services_selections">
+        <item>800Notes.com</item>
+        <item>Mr Number</item>
+    </string-array>
+</resources>
