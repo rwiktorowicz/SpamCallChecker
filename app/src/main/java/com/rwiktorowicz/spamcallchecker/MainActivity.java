@@ -14,6 +14,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 
@@ -23,6 +25,19 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (getIntent().getDataString() != null) {
+            try {
+                String phonenumber = URLDecoder.decode(getIntent().getDataString(),"UTF-8");
+                phonenumber = phonenumber.replace("tel:","");
+                phonenumber = removeNonNumericCharacters(phonenumber);
+                phonenumber = "1" + phonenumber;
+
+                EditText phonetextbox = (EditText) findViewById(R.id.phoneTextBox);
+                phonetextbox.setText(phonenumber);
+            } catch (UnsupportedEncodingException e) {
+                Toast.makeText(this,"There was an error processing the phone number.",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void searchButtonClick(View view) {
@@ -31,6 +46,9 @@ public class MainActivity extends ActionBarActivity {
 
         if (phonenumber.length() != 11) {
             Toast.makeText(this,"The phone number is not valid. Must be 11 digits including a prefix of 1!",Toast.LENGTH_SHORT).show();
+        }
+        else if (phonenumber.length() == 11 && phonenumber.startsWith("1") == false) {
+            Toast.makeText(this,"The phone number must start with 1!",Toast.LENGTH_SHORT).show();
         }
         else {
             Intent openurl = new Intent(Intent.ACTION_VIEW, Uri.parse(getURL(phonenumber)));
